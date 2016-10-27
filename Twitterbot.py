@@ -3,8 +3,6 @@
 
 import tweepy, time, sys
 
-argfile = str(sys.argv[1])
-
 
 CKEY = ''  
 CSECRET = ''  
@@ -14,7 +12,7 @@ auth = tweepy.OAuthHandler(CKEY, CSECRET)
 auth.set_access_token(AKEY, ASECRET)
 api = tweepy.API(auth)
 
-filename = open(argfile, 'r')
+filename = open('Twitterbot', 'r')
 f = filename.readlines()
 filename.close()
 
