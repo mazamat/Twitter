@@ -1,53 +1,29 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
-
 from PySide import QtGui
-import math
-import re
 import sys
-import pandas as pd
-from collections import OrderedDict
 import spotlight
-from nltk.tokenize import word_tokenize
-import json, ast
 import xlrd
 from urllib2 import urlopen
 from contextlib import closing
-
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from PyQt4 import QtGui
 from PyQt4.QtGui import *
-import math
 import re
-import sys
-import json, ast
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 from matplotlib.pylab import *
-from PyQt4 import QtGui, QtCore
-import goslate
 import tweepy
 from PyQt4 import QtGui, QtCore
 import json, ast
-import pandas as pd
-from PyQt4.QtCore import Qt
 from PyQt4.QtGui import (
     QApplication, QWidget, QLabel, QLineEdit, QTextEdit,
     QFrame, QGridLayout, QVBoxLayout,
 )
 from PyQt4.QtCore import *
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 # AFINN-111 is as of June 2011 the most recent version of AFINN
 filenameAFINN = 'AFINN/AFINN-111.txt'
 afinn = dict(map(lambda (w, s): (w, int(s)), [
     ws.strip().split('\t') for ws in open(filenameAFINN)]))
-
 # Word splitter pattern
 pattern_split = re.compile(r"\W+")
 
@@ -63,7 +39,6 @@ def sentiment(text):
         # How should you weight the individual word sentiments?
         # You could do N, sqrt(N) or 1 for example. Here I use sqrt(N)
         sentiment = float(sum(sentiments)) / math.sqrt(len(sentiments))
-
     else:
         sentiment = 0
     return sentiment
@@ -143,11 +118,9 @@ class MyTweet(QtGui.QMainWindow):
         self.initUI()
 
     def initUI(self):
-        # self.setGeometry(200, 100, 750, 50)
+        
         self.frame = QFrame(self)
-
-        box = QtGui.QHBoxLayout()
-        # self.frame.setFrameShape(QFrame.Box)
+        box = QtGui.QHBoxLayout()       
         grid = QGridLayout(self.frame)
         label = QLabel('Your Tweet      ', self.frame)
         label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
@@ -161,7 +134,6 @@ class MyTweet(QtGui.QMainWindow):
         self.textedit.setMaximumHeight(label.sizeHint().height() * 4)
         self.textedit.setFont(font)
         highlighter = MyHighlighter(self.textedit, "Classic")
-
         grid.addWidget(label, 1, 0)
         grid.addWidget(self.textedit, 1, 1)
         grid.setContentsMargins(40, 10, 300, 500)
@@ -176,10 +148,8 @@ class MyTweet(QtGui.QMainWindow):
         qbtn2.clicked.connect(self.close)
         box.addWidget(qbtn2)
 
-        self.frame2 = QFrame(self)
-        # self.frame2.move(50, 150)
+        self.frame2 = QFrame(self)        
         self.frame2.setGeometry(50, 150, 250, 100)
-
         self.frame2.setFrameShape(QFrame.Box)
         lbl0 = QtGui.QLabel("Green Color ", self)
         palette = QtGui.QPalette()
@@ -211,72 +181,46 @@ class MyTweet(QtGui.QMainWindow):
         self.show()
 
     def sendPressed(self):
-        tweet = self.textedit.toPlainText()
-        # print tweet
-        # Mytable('6')
+        tweet = self.textedit.toPlainText()  
 
-        CONSUMER_KEY = '90sGVaeiRyC5XfuiqANBh4WtW'
-        CONSUMER_SECRET = '4zPmDOceet3L0H7p2f4yuqDCoymkHc2tCCvp5nwHDRtN9irTfM'
-        ACCESS_KEY = '784829503776387072-FX3oLrY08w4zF7IYesu9zH17Gm8NQuU'
-        ACCESS_SECRET = 'gRofpzGzUVC2IkoIPiFwHRAZbDbAHfgQeFNiYuLRF9l6M'
+        CONSUMER_KEY = ''
+        CONSUMER_SECRET = ''
+        ACCESS_KEY = ''
+        ACCESS_SECRET = ''
 
         auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
         auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 
         api = tweepy.API(auth)
-        # return tweet
-
-        # self.k = "{0:.0f}%".format(100 * indicoio.sentiment(self.tweet))
+        
         self.statusBar().showMessage('Sending... ')
         api.update_status(status=tweet)
         self.statusBar().showMessage('Your Tweet was send ')
         self.textedit.clear()
-        # self.returnPressed(self)
-
+        
     def eventFilter(self, widget, event):
         if event.type() == QtCore.QEvent.KeyPress:
             key = event.key()
             if key == QtCore.Qt.Key_Return:
-
-                '''msg = QMessageBox()
-                msg.setIcon(QMessageBox.Information)
-
-                msg.setText("This is a message box")
-                msg.setInformativeText("This is additional information")
-                msg.setWindowTitle("MessageBox demo")
-                msg.setDetailedText("DETAIL")
-                msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)'''
                 with open("mix.txt")as f:
                     file = [line.strip() for line in f]
-
-                # textt = ''
                 tweet = self.textedit.toPlainText()
-                tweets = str(tweet).split()
-                # print words
+                tweets = str(tweet).split()          
                 l = 0
                 tweet_sentiment = sentiment(str(tweets))
-                ts = float(tweet_sentiment)
-                # print("%6.2f %s" % (sentiment(text), text))
-                norm_ts = (10) * ((float(ts) - (-5)) / (5 - (-5)))
-                # print kh2
+                ts = float(tweet_sentiment)               
+                norm_ts = (10) * ((float(ts) - (-5)) / (5 - (-5)))              
                 list = [((0.25) * norm_ts)]
                 for j in range(len(tweets)):
                     was = False
                     for i in range(len(file)):
-                        if tweets[j] == file[i]:
-                            #print tweets[j]
-                            # print("%6.2f %s" % (sentiment(words[j]), words[j]))
+                        if tweets[j] == file[i]:                         
                             words_sentiment = float(sentiment(tweets[j]))
                             norm_ws = (10) * ((float(words_sentiment) - (-5)) / (5 - (-5)))
-                            #print norm_ws
                             l = l + 1
                             was = True
-
                             list.append(((0.25) * norm_ws) / 6)
 
-                            # print l
-
-                            # Automatically geolocate the connecting IP
                 url = 'http://freegeoip.net/json/'
                 try:
                     with closing(urlopen(url)) as response:
@@ -308,23 +252,16 @@ class MyTweet(QtGui.QMainWindow):
 
                         Democracy = [i for n, (s, i) in enumerate(m2) if s == location_country]
                         Democracy_index = str(Democracy).strip('[]')
-
-                        #print "Democracy_index: " + str(Democracy_index)
-
                         list.append((0.25) * float(Democracy_index))
 
                 except:
                     print("error")
 
                 annotations = spotlight.annotate('http://spotlight.sztaki.hu:2222/rest/annotate', str(tweet))
-
-                d = ast.literal_eval(json.dumps(annotations))
-                # print d
+                d = ast.literal_eval(json.dumps(annotations))            
                 size = 2
                 h = filter(
                     lambda person: person[
-                                       # 'types'] == 'DBpedia:Agent,Schema:Person,Http://xmlns.com/foaf/0.1/Person,DBpedia:Person' or
-                                       # person[
                                        'types'] == 'DBpedia:Agent,Schema:Person,Http://xmlns.com/foaf/0.1/Person,DBpedia:Person,DBpedia:Politician' or
                                    person[
                                        'types'] == 'DBpedia:Agent,Schema:Person,Http://xmlns.com/foaf/0.1/Person,DBpedia:Person,DBpedia:Politician,DBpedia:Senator' or
@@ -339,25 +276,15 @@ class MyTweet(QtGui.QMainWindow):
                 m = []
                 separator = ' , '
                 for l in h:
-                    # print l['surfaceForm']
-                    # m = l['surfaceForm'] , l['URI']
-                    # print m
-
-                    # print("%6.2f %s" % (sentiment(l['surfaceForm']), l['surfaceForm']))
                     list.append(sentiment(l['surfaceForm']))
                     m.append(l['surfaceForm']), m.append(l['URI'])
-                b = [m[i:i + size] for i in range(0, len(m), size)]
-                #print b
+                b = [m[i:i + size] for i in range(0, len(m), size)]              
                 b1 = [item[0] for item in b]
                 b2 = [item[1] for item in b]
-                #b3 = b2.linkActivated.connect(lambda link: openLink(link))
-                #print b1
-                #print b2
                 b3 = str(separator.join(str(element) for element in b2))
                 annotations1 = spotlight.annotate('http://spotlight.sztaki.hu:2222/rest/annotate', str(tweet))
 
-                d1 = ast.literal_eval(json.dumps(annotations1))
-                # print d
+                d1 = ast.literal_eval(json.dumps(annotations1))               
                 size = 2
                 h1 = filter(
                     lambda place: place[
@@ -367,12 +294,6 @@ class MyTweet(QtGui.QMainWindow):
                 m1 = []
 
                 for l1 in h1:
-                    # print l['surfaceForm']
-                    # m = l['surfaceForm'] , l['URI']
-                    # print m
-
-
-
                     m1.append(l1['surfaceForm']), m1.append(l1['URI'])
                 b4 = [m1[i:i + size] for i in range(0, len(m1), size)]
                 b5 = [item[0] for item in b4]
@@ -387,41 +308,25 @@ class MyTweet(QtGui.QMainWindow):
                 Dupcountries = set(b6)
                 print "show duplicate_countries :" + str(Dupcountries)
                 b8 = str(separator.join(str(element) for element in Dupcountries))
-                print "extract county :" + str(b8)
-
-                # label.setOpenExternalLinks(True)  # opens your web browser
+                print "extract county :" + str(b8)               
                 with open("mix.txt")as f:
                     file1 = [line.strip() for line in f]
-
-                # textt = ''
-                #tweets1 = self.textedit.toPlainText()
-                tweets1 = str(tweet).split()
-                # print words
+                tweets1 = str(tweet).split()         
                 p = 0
                 tweet_sentiment1 = sentiment(str(tweet))
-                ts1 = float(tweet_sentiment1)
-                #print("%6.2f %s" % (sentiment(tweet), tweet))
-                norm_ts1 = (10) * ((float(ts1) - (-5)) / (5 - (-5)))
-                #print "norm_ts1 :" + str(norm_ts1)
+                ts1 = float(tweet_sentiment1)        
+                norm_ts1 = (10) * ((float(ts1) - (-5)) / (5 - (-5)))        
                 list1 = [((0.25) * norm_ts1)]
                 for j in range(len(tweets1)):
                     was = False
                     for i in range(len(file1)):
                         if tweets1[j] == file1[i]:
-                            #print "tweet1 [j]: " + tweets1[j]
-                            #print("%6.2f %s" % (sentiment(tweets1[j]), tweets1[j]))
                             words_sentiment1 = float(sentiment(tweets[j]))
-                            norm_ws = (10) * ((float(words_sentiment1) - (-5)) / (5 - (-5)))
-                            #print "norm ws1 :" + norm_ws1
+                            norm_ws = (10) * ((float(words_sentiment1) - (-5)) / (5 - (-5)))                       
                             p = p + 1
                             was = True
-
                             list1.append(((0.25) * norm_ws1) / 6)
-
                             print p
-
-                            # Automatically geolocate the connecting IP
-                            # print location_country
                 workbook = xlrd.open_workbook('HFI2.xlsx', "rb")
                 sheets = workbook.sheet_names()
                 required_data11 = []
@@ -440,39 +345,14 @@ class MyTweet(QtGui.QMainWindow):
                 Fotn1 = [i for n, (s, i) in enumerate(m1) if s == b8.capitalize()]
                 Fotn_index1 = str(Fotn1).strip('[]')
                 norm1 = (-10) * ((float(Fotn_index1) - 0) / 100) + 10
-                #print "Fotn_index1: " + str(Fotn_index1)
-                #print "norm1: " + str(norm1)
-
                 list1.append((0.25) * float(norm1))
-
                 Democracy1 = [i for n, (s, i) in enumerate(m21) if s == b8.capitalize()]
                 Democracy_index1 = str(Democracy1).strip('[]')
-
-                #print "Democracy_index1: " + str(Democracy_index1)
-
                 list1.append((0.25) * float(Democracy_index1))
-
-
-
-
-
-                #labels = ['Entity', 'URI']
-                # print pd.DataFrame.from_records(b, columns=labels)
-                # print list
-                # print list.append(kk)
-
                 text = (str(sum(list)))
-                #print (str(sum(list)))
-                text1 = (str(sum(list1)))
-                #print (str(sum(list1)))
-                # retval = msg.exec_()
-                #Mytable(sum(list))
-                # Mytable('6')
-
+                text1 = (str(sum(list1)))               
                 table = QTableWidget()
                 tableItem = QTableWidgetItem()
-
-
                 # initiate table
                 table.setWindowTitle("QTableWidget Example @pythonspot.com")
                 table.resize(800, 200)
@@ -485,15 +365,9 @@ class MyTweet(QtGui.QMainWindow):
                 table.setStyleSheet(stylesheet1)
                 stylesheet = "::section{Background-color:rgb(220,2,0);border-radius:14px;}"
                 table.horizontalHeader().setStyleSheet(stylesheet)
-                # table.setItem(0, 0, QTableWidgetItem(location_country))
-                # set data
-
                 header = table.horizontalHeader()
                 header.setResizeMode(QHeaderView.ResizeToContents)
                 header.setStretchLastSection(True)
-                # print(QtGui.QStyleFactory.keys())
-
-                #separator = ' , '
                 if text < '5':
                     table.setItem(0, 1, QTableWidgetItem("   Risk"))
                     table.setItem(0, 0, QTableWidgetItem(location_country.capitalize()))
@@ -510,8 +384,7 @@ class MyTweet(QtGui.QMainWindow):
 
                 elif '5' <= text < '7':
                     table.setItem(0, 2, QTableWidgetItem("Warn"))
-                    table.setItem(0, 0, QTableWidgetItem(location_country.capitalize()))
-                    #table.setItem(1, 0, QTableWidgetItem(b8.capitalize()))
+                    table.setItem(0, 0, QTableWidgetItem(location_country.capitalize()))                    
                     table.setItem(0, 4, QTableWidgetItem(str(separator.join(str(element) for element in b1))))
                     table.setItem(0, 5, QTableWidgetItem(str(separator.join(str(element) for element in b2))))
                     table.horizontalHeaderItem(1).setToolTip("Warning! High Risk to send Tweet!!")
@@ -523,7 +396,6 @@ class MyTweet(QtGui.QMainWindow):
                 elif text >= '7':
                     table.setItem(0, 3, QTableWidgetItem("  Safe"))
                     table.setItem(0, 0, QTableWidgetItem(location_country.capitalize()))
-                    #table.setItem(1, 0, QTableWidgetItem(b8.capitalize()))
                     table.setItem(0, 4, QTableWidgetItem(str(separator.join(str(element) for element in b1))))
                     table.setItem(0, 5, QTableWidgetItem(str(separator.join(str(element) for element in b2))))
                     table.horizontalHeaderItem(1).setToolTip("Warning! High Risk to send Tweet!!")
@@ -537,25 +409,15 @@ class MyTweet(QtGui.QMainWindow):
 
                 if text1 < '5':
                     table.setItem(1, 1, QTableWidgetItem("   Risk"))
-
                     table.setItem(1, 0, QTableWidgetItem(b8.capitalize()))
-
-
-
-
 
                 elif '5' <= text1 < '7':
                     table.setItem(1, 2, QTableWidgetItem("Warn"))
-
                     table.setItem(1, 0, QTableWidgetItem(b8.capitalize()))
-
 
                 elif text1 >= '7':
                     table.setItem(1, 3, QTableWidgetItem("  Safe"))
-
                     table.setItem(1, 0, QTableWidgetItem(b8.capitalize()))
-
-
                 else:
                     return None
 
@@ -563,22 +425,15 @@ class MyTweet(QtGui.QMainWindow):
                 window = QWidget()
                 table.show()
                 window.addAction(table)
-                window.show()
-                # Mytable.setItem(0, 4, QTableWidgetItem(b))
-
-
+                window.show()        
 
         return QtGui.QWidget.eventFilter(self, widget, event)
-
-
-
 
 def main():
     app = QtGui.QApplication(sys.argv)
     win = MainWindow()
     win.show()
     app.exec_()
-
 
 if __name__ == '__main__':
     sys.exit(main())
