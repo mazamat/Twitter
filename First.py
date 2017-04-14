@@ -250,29 +250,29 @@ class MyTweet(QtGui.QMainWindow):
                     file = [line.strip() for line in f]
 
                 # textt = ''
-                wordsss = self.textedit.toPlainText()
-                wordss = str(wordsss).split()
+                tweet = self.textedit.toPlainText()
+                tweets = str(tweet).split()
                 # print words
                 l = 0
-                kk = sentiment(str(wordsss))
-                kh = float(kk)
+                tweet_sentiment = sentiment(str(tweets))
+                ts = float(tweet_sentiment)
                 # print("%6.2f %s" % (sentiment(text), text))
-                kh2 = (10) * ((float(kh) - (-5)) / (5 - (-5)))
+                norm_ts = (10) * ((float(ts) - (-5)) / (5 - (-5)))
                 # print kh2
-                list = [((0.25) * kh2)]
-                for j in range(len(wordss)):
+                list = [((0.25) * norm_ts)]
+                for j in range(len(tweets)):
                     was = False
                     for i in range(len(file)):
-                        if wordss[j] == file[i]:
-                            print wordss[j]
+                        if tweets[j] == file[i]:
+                            #print tweets[j]
                             # print("%6.2f %s" % (sentiment(words[j]), words[j]))
-                            kh1 = float(sentiment(wordss[j]))
-                            kh3 = (10) * ((float(kh1) - (-5)) / (5 - (-5)))
-                            print kh3
+                            words_sentiment = float(sentiment(tweets[j]))
+                            norm_ws = (10) * ((float(words_sentiment) - (-5)) / (5 - (-5)))
+                            #print norm_ws
                             l = l + 1
                             was = True
 
-                            list.append(((0.25) * kh3) / 6)
+                            list.append(((0.25) * norm_ws) / 6)
 
                             # print l
 
@@ -283,7 +283,7 @@ class MyTweet(QtGui.QMainWindow):
                         location = json.loads(response.read())
                         location_country = location['country_name']
 
-                        print location_country
+                        #print location_country
                         workbook = xlrd.open_workbook('HFI2.xlsx', "rb")
                         sheets = workbook.sheet_names()
                         required_data = []
@@ -299,24 +299,24 @@ class MyTweet(QtGui.QMainWindow):
                         m.pop(0)
                         m2.pop(0)
 
-                        mm = [i for n, (s, i) in enumerate(m) if s == location_country]
-                        mmm = str(mm).strip('[]')
-                        norm = (-10) * ((float(mmm) - 0) / 100) + 10
-                        print float(mmm)
-                        print float(norm)
+                        Fotn = [i for n, (s, i) in enumerate(m) if s == location_country]
+                        Fotn_index = str(Fotn).strip('[]')
+                        norm = (-10) * ((float(Fotn_index) - 0) / 100) + 10
+                        print "Fotn_index: " + str(Fotn_index)
+                        print "norm: " + str(norm)
                         list.append((0.25) * float(norm))
 
-                        nn = [i for n, (s, i) in enumerate(m2) if s == location_country]
-                        nnn = str(nn).strip('[]')
+                        Democracy = [i for n, (s, i) in enumerate(m2) if s == location_country]
+                        Democracy_index = str(Democracy).strip('[]')
 
-                        # print float(nnn)
+                        #print "Democracy_index: " + str(Democracy_index)
 
-                        list.append((0.25) * float(nnn))
+                        list.append((0.25) * float(Democracy_index))
 
                 except:
                     print("error")
 
-                annotations = spotlight.annotate('http://spotlight.sztaki.hu:2222/rest/annotate', str(wordsss))
+                annotations = spotlight.annotate('http://spotlight.sztaki.hu:2222/rest/annotate', str(tweet))
 
                 d = ast.literal_eval(json.dumps(annotations))
                 # print d
@@ -347,14 +347,14 @@ class MyTweet(QtGui.QMainWindow):
                     list.append(sentiment(l['surfaceForm']))
                     m.append(l['surfaceForm']), m.append(l['URI'])
                 b = [m[i:i + size] for i in range(0, len(m), size)]
-                print b
+                #print b
                 b1 = [item[0] for item in b]
                 b2 = [item[1] for item in b]
                 #b3 = b2.linkActivated.connect(lambda link: openLink(link))
-                print b1
-                print b2
+                #print b1
+                #print b2
                 b3 = str(separator.join(str(element) for element in b2))
-                annotations1 = spotlight.annotate('http://spotlight.sztaki.hu:2222/rest/annotate', str(wordsss))
+                annotations1 = spotlight.annotate('http://spotlight.sztaki.hu:2222/rest/annotate', str(tweet))
 
                 d1 = ast.literal_eval(json.dumps(annotations1))
                 # print d
@@ -376,53 +376,52 @@ class MyTweet(QtGui.QMainWindow):
                     m1.append(l1['surfaceForm']), m1.append(l1['URI'])
                 b4 = [m1[i:i + size] for i in range(0, len(m1), size)]
                 b5 = [item[0] for item in b4]
-                b9 = map(str.lower,b5)
-                print b9
+                Countries = map(str.lower, b5)
+                print ("show all Countries : ") + str(Countries)
 
                 b6 = []
-                for x in b9:
-
+                for x in Countries:
                     if x != str(location_country.lower()):
                         b6.append(x)
 
-                b7 = set(b6)
-
-                b8 = str(separator.join(str(element) for element in b7))
-                print b8
+                Dupcountries = set(b6)
+                print "show duplicate_countries :" + str(Dupcountries)
+                b8 = str(separator.join(str(element) for element in Dupcountries))
+                print "extract county :" + str(b8)
 
                 # label.setOpenExternalLinks(True)  # opens your web browser
                 with open("mix.txt")as f:
                     file1 = [line.strip() for line in f]
 
                 # textt = ''
-                wordsss1 = self.textedit.toPlainText()
-                wordss1 = str(wordsss1).split()
+                #tweets1 = self.textedit.toPlainText()
+                tweets1 = str(tweet).split()
                 # print words
-                l1 = 0
-                kk1 = sentiment(str(wordsss1))
-                kh1 = float(kk1)
-                # print("%6.2f %s" % (sentiment(text), text))
-                kh21 = (10) * ((float(kh1) - (-5)) / (5 - (-5)))
-                # print kh2
-                list1 = [((0.25) * kh21)]
-                for j in range(len(wordss1)):
+                p = 0
+                tweet_sentiment1 = sentiment(str(tweet))
+                ts1 = float(tweet_sentiment1)
+                #print("%6.2f %s" % (sentiment(tweet), tweet))
+                norm_ts1 = (10) * ((float(ts1) - (-5)) / (5 - (-5)))
+                #print "norm_ts1 :" + str(norm_ts1)
+                list1 = [((0.25) * norm_ts1)]
+                for j in range(len(tweets1)):
                     was = False
                     for i in range(len(file1)):
-                        if wordss1[j] == file1[i]:
-                            print wordss1[j]
-                            # print("%6.2f %s" % (sentiment(words[j]), words[j]))
-                            kh11 = float(sentiment(wordss1[j]))
-                            kh31 = (10) * ((float(kh11) - (-5)) / (5 - (-5)))
-                            print kh31
-                            l1 = l1 + 1
+                        if tweets1[j] == file1[i]:
+                            #print "tweet1 [j]: " + tweets1[j]
+                            #print("%6.2f %s" % (sentiment(tweets1[j]), tweets1[j]))
+                            words_sentiment1 = float(sentiment(tweets[j]))
+                            norm_ws = (10) * ((float(words_sentiment1) - (-5)) / (5 - (-5)))
+                            #print "norm ws1 :" + norm_ws1
+                            p = p + 1
                             was = True
 
-                            list.append(((0.25) * kh31) / 6)
+                            list1.append(((0.25) * norm_ws1) / 6)
 
-                            # print l
+                            print p
 
                             # Automatically geolocate the connecting IP
-                       # print location_country
+                            # print location_country
                 workbook = xlrd.open_workbook('HFI2.xlsx', "rb")
                 sheets = workbook.sheet_names()
                 required_data11 = []
@@ -433,26 +432,25 @@ class MyTweet(QtGui.QMainWindow):
                         row_valaues = sh.row_values(rownum)
                         required_data11.append((row_valaues[1], row_valaues[2]))
                         required_data21.append((row_valaues[1], row_valaues[4]))
-                        m111 = ast.literal_eval(json.dumps(required_data11))
-                        m2111 = ast.literal_eval(json.dumps(required_data21))
-                        m111.pop(0)
-                        m2111.pop(0)
+                        m1 = ast.literal_eval(json.dumps(required_data11))
+                        m21 = ast.literal_eval(json.dumps(required_data21))
+                        m1.pop(0)
+                        m21.pop(0)
 
-                        mm1 = [i for n, (s, i) in enumerate(m111) if s == b8.capitalize()]
-                        mmm1 = str(mm1).strip('[]')
-                        #print mm1
-                        #print mmm1
-                        *norm1 = (-10) * ((float(mmm1) - 0) / 100) + 10
-                        #print float(mmm)
-                        #print float(norm)
-                        *list.append((0.25) * float(norm1))
+                Fotn1 = [i for n, (s, i) in enumerate(m1) if s == b8.capitalize()]
+                Fotn_index1 = str(Fotn1).strip('[]')
+                norm1 = (-10) * ((float(Fotn_index1) - 0) / 100) + 10
+                #print "Fotn_index1: " + str(Fotn_index1)
+                #print "norm1: " + str(norm1)
 
-                        nn1 = [i for n, (s, i) in enumerate(m2111) if s == b8.capitalize()]
-                        nnn1 = str(nn1).strip('[]')
+                list1.append((0.25) * float(norm1))
 
-                        # print float(nnn)
+                Democracy1 = [i for n, (s, i) in enumerate(m21) if s == b8.capitalize()]
+                Democracy_index1 = str(Democracy1).strip('[]')
 
-                        *list.append((0.25) * float(nnn1))
+                #print "Democracy_index1: " + str(Democracy_index1)
+
+                list1.append((0.25) * float(Democracy_index1))
 
 
 
